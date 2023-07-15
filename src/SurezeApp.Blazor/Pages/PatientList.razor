@@ -1,0 +1,136 @@
+﻿@page "/Patients"
+@using SurezeApp.Patients;
+@using SurezeApp.Localization
+@using Volo.Abp.Application.Dtos;
+@inherits SurezeAppComponentBase;
+@inject IPatientService PatientService;
+@inject NavigationManager NavigationManager
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <h2>@L["Patient List"]</h2>
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Button Color="Color.Primary"
+                        Clicked="OpenPatientCreatePage">
+                    @L["New Patient"]
+                </Button>
+            </Column>
+        </Row>
+    </CardHeader>
+    <CardBody>
+
+        <input class="form-control form-control-sm" type="text" step="any"
+        @bind-value:event="onchange" @oninput="SearchByText" @bind-value="searchText" placeholder="Search" />
+
+        <DataGrid TItem="PatientDetailDto"
+                  Data="PatientLists"
+                  ReadData="OnDataGridReadAsync"
+                  TotalItems="TotalCount"
+                  ShowPager="true"
+                  PageSize="PageSize">
+            <DataGridColumns>
+                <DataGridColumn TItem="PatientDetailDto"
+                                Field="@nameof(PatientDetailDto.FirstName)"
+                                Caption="@L["FirstName"]"></DataGridColumn>
+                <DataGridColumn TItem="PatientDetailDto"
+                                Field="@nameof(PatientDetailDto.LastName)"
+                                Caption="@L["LastName"]"></DataGridColumn>
+                <DataGridColumn TItem="PatientDetailDto"
+                                Field="@nameof(PatientDetailDto.MaritalStatus)"
+                                Caption="@L["MaritalStatus"]"></DataGridColumn>
+                <DataGridColumn Width="150px"
+                                TItem="PatientDetailDto"
+                                Field="@nameof(PatientDetailDto.Id)"
+                                Sortable="false"
+                                Caption="@L["Actions"]">
+                    <DisplayTemplate>
+                        <Dropdown>
+                            <DropdownToggle Color="Color.Primary">
+                                @L["Actions"]
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                <DropdownItem Clicked="() => EditPatientAsync(context)">
+                                    @L["Edit"]
+                                </DropdownItem>
+                                @*                                <DropdownItem Clicked="() => DeleteAuthorAsync(context)">
+                                @L["Delete"]
+                                </DropdownItem>*@
+                            </DropdownMenu>
+                        </Dropdown>
+                    </DisplayTemplate>
+                </DataGridColumn>
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+
+@code {
+
+    private IReadOnlyList<PatientDetailDto> PatientLists { get; set; }
+
+    private int PageSize { get; } = LimitedResultRequestDto.DefaultMaxResultCount;
+    private int CurrentPage { get; set; }
+    private int TotalCount { get; set; }
+    private string CurrentSorting { get; set; } = string.Empty;
+    private string searchText { get; set; } = string.Empty;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        await GetPatientsAsync();
+    }
+
+    private async void OnDataGridReadAsync(DataGridReadDataEventArgs<PatientDetailDto> e)
+    {
+        CurrentSorting = e.Columns
+            .Where(c => c.SortDirection != SortDirection.Default)
+            .Select(c => c.Field + (c.SortDirection == SortDirection.Descending ? " DESC" : ""))
+            .JoinAsString(",");
+        CurrentPage = e.Page - 1;
+
+        await GetPatientsAsync();
+
+        //await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task GetPatientsAsync()
+    {
+        var result = await PatientService.GetPatientListAsync(
+        new GetPatientListDto
+            {
+                MaxResultCount = PageSize,
+                SkipCount = CurrentPage * PageSize,
+                Sorting = CurrentSorting,
+                Filter = searchText
+            }
+        );
+
+        PatientLists = result.Items;
+        TotalCount = (int)result.TotalCount;
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void OpenPatientCreatePage()
+    {
+        NavigationManager.NavigateTo("/Registration");
+    }
+
+    private async void SearchByText(ChangeEventArgs args)
+    {
+        searchText = args.Value.ToString();
+        await GetPatientsAsync();
+    }
+
+    private async Task EditPatientAsync(PatientDetailDto patientDetailDto)
+    {
+        NavigationManager.NavigateTo("/EditPatient/" + patientDetailDto.Id.ToString());
+    }
+
+
+}
