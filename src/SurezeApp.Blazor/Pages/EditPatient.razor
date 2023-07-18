@@ -1,5 +1,6 @@
 ﻿@page "/EditPatient/{id}"
 @using SurezeApp.Patients;
+@using SurezeApp.Common;
 @inject IPatientDetailService PatientDetailService;
 @inject NavigationManager NavigationManager
 @using System.Net.Http.Json;
@@ -104,15 +105,12 @@
                         <Field>
                             <FieldLabel>IsActive Status</FieldLabel>
                             <Select @bind-SelectedValue="@Patient.ActiveStatus">
-                                <SelectItem Value="0">
-                                    Choose An Option
-                                </SelectItem>
-                                @*@foreach (var provider in providerList)
+                                @foreach (var title in activeStatuses)
                                 {
-                                <SelectItem Value="@provider.Code">
-                                @provider.Name
-                                </SelectItem>
-                                }*@
+                                    <SelectItem Value="@title.Code">
+                                        @title.Name
+                                    </SelectItem>
+                                }
                             </Select>
                         </Field>
                     </div>
@@ -208,7 +206,7 @@
                         <div class="col-6">
                             <Field>
                                 <FieldLabel>Date Of Birth</FieldLabel>
-                                <DateEdit TValue="DateTime" @bind-Date="@Patient.DateOfBirth" />
+                                <DateEdit TValue="DateTime?" @bind-Date="@Patient.DateOfBirth" />
                                 @*                                <TextEdit>
                                 <Feedback>
                                 <ValidationError />
@@ -223,12 +221,12 @@
                                     <SelectItem Value="0">
                                         Choose An Option
                                     </SelectItem>
-                                    @*@foreach (var item in providerList)
+                                    @foreach (var item in genders)
                                     {
                                     <SelectItem Value="@item.Code">
                                     @item.Name
                                     </SelectItem>
-                                    }*@
+                                    }
                                 </Select>
                             </Field>
                         </div>
@@ -325,12 +323,12 @@
                                     <SelectItem Value="0">
                                         Choose An Option
                                     </SelectItem>
-                                    @*@foreach (var provider in providerList)
+                                    @foreach (var provider in citizenStatuses)
                                     {
-                                    <SelectItem Value="@provider.Code">
-                                    @provider.Name
-                                    </SelectItem>
-                                    }*@
+                                        <SelectItem Value="@provider.Code">
+                                            @provider.Name
+                                        </SelectItem>
+                                    }
                                 </Select>
                             </Field>
                         </div>
@@ -406,7 +404,154 @@
 
                 @*ContactDetails*@
                 <div style="display:@ContactDetails">
-                    Contact Details
+                    <div class="row">
+                        <div class="col-6">
+                            <Field>
+                                <FieldLabel>Contact Mode</FieldLabel>
+                                <Select @bind-SelectedValue="@Contact.ContactMode">
+                                    <SelectItem Value="0">
+                                        Choose An Option
+                                    </SelectItem>
+                                    @*@foreach (var provider in providerList)
+                                    {
+                                    <SelectItem Value="@provider.Code">
+                                    @provider.Name
+                                    </SelectItem>
+                                    }*@
+                                </Select>
+                            </Field>
+                        </div>
+                        <div class="col-6">
+                            <Field>
+                                <FieldLabel>&nbsp;</FieldLabel> <br />
+                                <InputCheckbox @bind-Value="@Contact.IsPrimary"></InputCheckbox> <Span>Make this contact primary</Span>
+                            </Field>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <Field>
+                                <FieldLabel>Address 1</FieldLabel>
+                                <TextEdit @bind-Text="@Contact.Address1">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </Field>
+                        </div>
+                        <div class="col-6">
+                            <Field>
+                                <FieldLabel>Address 2</FieldLabel>
+                                <TextEdit @bind-Text="@Contact.Address2">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </Field>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <Field>
+                                <FieldLabel>Address 3</FieldLabel>
+                                <TextEdit @bind-Text="@Contact.Address3">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </Field>
+                        </div>
+                        <div class="col-6">
+                            <Field>
+                                <FieldLabel>Country</FieldLabel>
+                                <Select @bind-SelectedValue="@Contact.CountryCode">
+                                    <SelectItem Value="0">
+                                        Choose An Option
+                                    </SelectItem>
+                                    @*@foreach (var provider in providerList)
+                                    {
+                                    <SelectItem Value="@provider.Code">
+                                    @provider.Name
+                                    </SelectItem>
+                                    }*@
+                                </Select>
+                            </Field>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <Field>
+                                <FieldLabel>Postal Code</FieldLabel>
+                                <TextEdit @bind-Text="@Contact.PostalCode">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </Field>
+                        </div>
+                        <div class="col-6">
+                            <Field>
+                                <FieldLabel>City</FieldLabel>
+                                <TextEdit @bind-Text="@Contact.City">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </Field>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <Field>
+                                <FieldLabel>State</FieldLabel>
+                                <TextEdit @bind-Text="@Contact.State">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </Field>
+                        </div>
+                        <div class="col-6">
+                            <Field>
+                                <FieldLabel>Email</FieldLabel>
+                                <TextEdit @bind-Text="@Contact.Email">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </Field>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <Field>
+                                <FieldLabel>Phone Number 1</FieldLabel>
+                                <TextEdit @bind-Text="@Contact.PhoneNumber1">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </Field>
+                        </div>
+                        <div class="col-6">
+                            <Field>
+                                <FieldLabel>Phone Number 2</FieldLabel>
+                                <TextEdit @bind-Text="@Contact.PhoneNumber2">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </Field>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            @*<Button Color="Color.Light" Type="@ButtonType.Submit" PreventDefaultOnSubmit="true" Clicked="OpenPatientListPage">Back</Button>*@
+                        </div>
+                        <div class="col-6 text-end">
+                            <Button Color="Color.Primary" Type="@ButtonType.Submit" PreventDefaultOnSubmit="true" Clicked="UpdateContactAsync">Save</Button>
+                        </div>
+                    </div>
                 </div>
 
                 @*New Specimen Order*@
@@ -438,6 +583,8 @@
 
 
     private PatientDetailDto Patient { get; set; } = new PatientDetailDto();
+    private ContactDetailDto Contact { get; set; } = new ContactDetailDto();
+
     IReadOnlyList<AlternateIDTypeDto> alternateTypes = Array.Empty<AlternateIDTypeDto>();
     IReadOnlyList<PatientTitleDto> patientTitleList = Array.Empty<PatientTitleDto>();
     IReadOnlyList<PatientRaceDto> patientRace = Array.Empty<PatientRaceDto>();
@@ -446,6 +593,10 @@
     IReadOnlyList<NationalityDto> nationalities = Array.Empty<NationalityDto>();
     IReadOnlyList<ReligionDto> religions = Array.Empty<ReligionDto>();
     IReadOnlyList<MaritalStatusDto> maritalStatus = Array.Empty<MaritalStatusDto>();
+
+    List<CommonModel> activeStatuses = CommonList.activeStatuses;
+    List<CommonModel> citizenStatuses = CommonList.citizenStatuses;
+    List<CommonModel> genders = CommonList.genders;
 
     protected override async Task OnInitializedAsync()
     {
@@ -464,6 +615,13 @@
         religions = await PatientDetailService.GetReligionsAsync();
         maritalStatus = await PatientDetailService.GetMaritalStatusAsync();
         Patient = await PatientDetailService.GetPatientDetailAsync(Id);
+
+        var contactDetail = await PatientDetailService.GetContactDetailAsync(Patient.Id);
+
+        if (contactDetail != null)
+        {
+            Contact = contactDetail;
+        }
     }
 
     private void SetPatientDetails()
@@ -476,35 +634,26 @@
 
     private void SetContactDetails()
     {
-        if (Patient.Id.ToString() != "00000000-0000-0000-0000-000000000000")
-        {
-            PatientDetail = "none";
-            ContactDetails = "block";
-            NewSpecimenOrder = "none";
-            PreviousOrderList = "none";
-        }
+        PatientDetail = "none";
+        ContactDetails = "block";
+        NewSpecimenOrder = "none";
+        PreviousOrderList = "none";
     }
 
     private void SetNewSpecimenOrder()
     {
-        if (Patient.Id.ToString() != "00000000-0000-0000-0000-000000000000")
-        {
-            PatientDetail = "none";
-            ContactDetails = "none";
-            NewSpecimenOrder = "block";
-            PreviousOrderList = "none";
-        }
+        PatientDetail = "none";
+        ContactDetails = "none";
+        NewSpecimenOrder = "block";
+        PreviousOrderList = "none";
     }
 
     private void SetPreviousOrderList()
     {
-        if (Patient.Id.ToString() != "00000000-0000-0000-0000-000000000000")
-        {
-            PatientDetail = "none";
-            ContactDetails = "none";
-            NewSpecimenOrder = "none";
-            PreviousOrderList = "block";
-        }
+        PatientDetail = "none";
+        ContactDetails = "none";
+        NewSpecimenOrder = "none";
+        PreviousOrderList = "block";
     }
 
     private void OpenPatientListPage()
@@ -515,7 +664,18 @@
     private async void UpdatePatientPageAsync()
     {
         await PatientDetailService.UpdatePatientPageAsync(Patient);
-        //NavigationManager.NavigateTo("/Patients");
+        
+        PatientDetail = "none";
+        ContactDetails = "block";
+    }
+
+    private async void UpdateContactAsync()
+    {
+        Contact.PatientId = Patient.Id;
+        await PatientDetailService.UpdateContactAsync(Contact);
+        
+        ContactDetails = "none";
+        NewSpecimenOrder = "block";
     }
 
     // Image Upload

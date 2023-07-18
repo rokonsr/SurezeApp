@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Volo.Abp.ObjectMapping;
 
 namespace SurezeApp.Patients
 {
@@ -77,6 +79,25 @@ namespace SurezeApp.Patients
         {
             var patient = ObjectMapper.Map<PatientDetailDto, PatientDetail>(Patient);
             await _patientDetailRepository.UpdatePatientPageAsync(patient);
+        }
+
+        public async Task<ContactDetailDto> CreateContactAsync(ContactDetailDto contactDetail)
+        {
+            var contact = ObjectMapper.Map<ContactDetailDto, ContactDetail>(contactDetail);
+            var entity = await _patientDetailRepository.CreateContactAsync(contact);
+            return ObjectMapper.Map<ContactDetail, ContactDetailDto>(entity);
+        }
+
+        public async Task<ContactDetailDto?> GetContactDetailAsync(Guid patientId)
+        {
+            var contactDetail = await _patientDetailRepository.GetContactDetailAsync(patientId);
+            return ObjectMapper.Map<ContactDetail, ContactDetailDto>(contactDetail); ;
+        }
+
+        public async Task UpdateContactAsync(ContactDetailDto contactDetail)
+        {
+            var contact = ObjectMapper.Map<ContactDetailDto, ContactDetail>(contactDetail);
+            await _patientDetailRepository.UpdateContactAsync(contact);
         }
     }
 }

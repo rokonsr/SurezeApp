@@ -183,7 +183,8 @@ public class SurezeAppDbContext :
             b.Property(x => x.ContactMode).IsRequired();
             b.Property(x => x.Address1).IsRequired().HasMaxLength(250);
             b.Property(x => x.Address2).HasMaxLength(250);
-            b.Property(x => x.Address2).HasMaxLength(250);
+            b.Property(x => x.Address3).HasMaxLength(250);
+            b.Property(x => x.CountryCode).HasMaxLength(10);
             b.Property(x => x.PostalCode).HasMaxLength(128);
             b.Property(x => x.City).HasMaxLength(128);
             b.Property(x => x.State).HasMaxLength(128);

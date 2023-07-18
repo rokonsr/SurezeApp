@@ -18,5 +18,8 @@ namespace SurezeApp.Patients
         Task<List<Religion>> GetReligionsAsync();
         Task<PatientDetail> GetPatientDetailAsync(string id);
         Task UpdatePatientPageAsync(PatientDetail patient);
+        Task<ContactDetail> CreateContactAsync(ContactDetail contactDetail);
+        Task<ContactDetail?> GetContactDetailAsync(Guid patientId);
+        Task UpdateContactAsync(ContactDetail contact);
     }
 }

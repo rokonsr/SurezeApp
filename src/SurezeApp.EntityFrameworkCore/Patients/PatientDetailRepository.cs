@@ -20,8 +20,9 @@ namespace SurezeApp.Patients
         private readonly IRepository<PatientRace, Guid> _patientRaceRepository;
         private readonly IRepository<Religion, Guid> _religionRaceRepository;
         private readonly IRepository<PatientDetail, Guid> _patientRepository;
+        private readonly IRepository<ContactDetail, Guid> _contactRepository;
 
-        public PatientDetailRepository(IRepository<AlternateIDType, Guid> alternateIdTypeRepository, IRepository<PatientTitle, Guid> patientTitleRepository, IRepository<EducationLevel, Guid> educationLevelRepository, IRepository<Language, Guid> languageRepository, IRepository<MaritalStatus, Guid> maritalStatusRepository, IRepository<Nationality, Guid> nationalityRepository, IRepository<PatientRace, Guid> patientRaceRepository, IRepository<Religion, Guid> religionRaceRepository, IRepository<PatientDetail, Guid> patientRepository) 
+        public PatientDetailRepository(IRepository<AlternateIDType, Guid> alternateIdTypeRepository, IRepository<PatientTitle, Guid> patientTitleRepository, IRepository<EducationLevel, Guid> educationLevelRepository, IRepository<Language, Guid> languageRepository, IRepository<MaritalStatus, Guid> maritalStatusRepository, IRepository<Nationality, Guid> nationalityRepository, IRepository<PatientRace, Guid> patientRaceRepository, IRepository<Religion, Guid> religionRaceRepository, IRepository<PatientDetail, Guid> patientRepository, IRepository<ContactDetail, Guid> contactRepository) 
         {
             _alternateIdTypeRepository = alternateIdTypeRepository;
             _patientTitleRepository = patientTitleRepository;
@@ -32,11 +33,18 @@ namespace SurezeApp.Patients
             _patientRaceRepository = patientRaceRepository;
             _religionRaceRepository = religionRaceRepository;
             _patientRepository = patientRepository;
+            _contactRepository = contactRepository;
         }
 
         public async Task<long> CountAsync()
         {
             return await _patientRepository.CountAsync();
+        }
+
+        public async Task<ContactDetail> CreateContactAsync(ContactDetail contactDetail)
+        {
+            var result = await _contactRepository.InsertAsync(contactDetail);
+            return result;
         }
 
         public async Task<PatientDetail> CreatePatientAsync(PatientDetail patient)
@@ -48,6 +56,11 @@ namespace SurezeApp.Patients
         public async Task<List<AlternateIDType>> GetAlternateIDTypeAsync()
         {
             return await _alternateIdTypeRepository.GetListAsync();
+        }
+
+        public async Task<ContactDetail?> GetContactDetailAsync(Guid patientId)
+        {
+            return await _contactRepository.FirstOrDefaultAsync(x => x.PatientId == patientId);
         }
 
         public async Task<List<EducationLevel>> GetEducationLevelsAsync()
@@ -91,6 +104,32 @@ namespace SurezeApp.Patients
             return await _religionRaceRepository.GetListAsync();
         }
 
+        public async Task UpdateContactAsync(ContactDetail contact)
+        {
+            var updateEntity = await _contactRepository.FirstOrDefaultAsync(x => x.PatientId == contact.PatientId);
+
+            if (updateEntity == null)
+            {
+                await _contactRepository.InsertAsync(contact);
+                return;
+            }
+
+            updateEntity.ContactMode = contact.ContactMode;
+            updateEntity.IsPrimary = contact.IsPrimary;
+            updateEntity.Address1 = contact.Address1;
+            updateEntity.Address2 = contact.Address2;
+            updateEntity.Address3 = contact.Address3;
+            updateEntity.CountryCode = contact.CountryCode;
+            updateEntity.PostalCode = contact.PostalCode;
+            updateEntity.City = contact.City;
+            updateEntity.State = contact.State;
+            updateEntity.Email = contact.Email;
+            updateEntity.PhoneNumber1 = contact.PhoneNumber1;
+            updateEntity.PhoneNumber2 = contact.PhoneNumber2;
+
+            await _contactRepository.UpdateAsync(updateEntity);
+        }
+
         public async Task UpdatePatientPageAsync(PatientDetail patient)
         {
             var updateEntity = await _patientRepository.GetAsync(patient.Id);
@@ -100,13 +139,30 @@ namespace SurezeApp.Patients
                 return;
             }
 
+            updateEntity.PrimaryProvider = patient.PrimaryProvider;
+            updateEntity.MRN = patient.MRN;
+            updateEntity.ActiveStatus = patient.ActiveStatus;
+            updateEntity.PatientTitle = patient.PatientTitle;
+            updateEntity.Suffix = patient.Suffix;
             updateEntity.FirstName = patient.FirstName;
             updateEntity.LastName = patient.LastName;
+            updateEntity.NationalIDNumber = patient.NationalIDNumber;
+            updateEntity.AlternateType = patient.AlternateType;
+            updateEntity.AlternateIDNumber = patient.AlternateIDNumber;
             updateEntity.DateOfBirth = patient.DateOfBirth;
+            updateEntity.Sex = patient.Sex;
+            updateEntity.Race = patient.Race;
+            updateEntity.Language = patient.Language;
+            updateEntity.Ethnicity = patient.Ethnicity;
+            updateEntity.EducationLevel = patient.EducationLevel;
+            updateEntity.Nationality = patient.Nationality;
+            updateEntity.Citizen = patient.Citizen;
+            updateEntity.Religion = patient.Religion;
             updateEntity.MaritalStatus = patient.MaritalStatus;
+            updateEntity.PatientCategory = patient.PatientCategory;
             updateEntity.ProfilePicture = patient.ProfilePicture;
 
-            var result = await _patientRepository.UpdateAsync(updateEntity);
+            await _patientRepository.UpdateAsync(updateEntity);
         }
     }
 }

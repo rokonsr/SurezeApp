@@ -43,5 +43,8 @@ public class SurezeAppApplicationAutoMapperProfile : Profile
 
         CreateMap<PatientDetailListDto, PatientDetailDto>();
         CreateMap<PatientDetailDto, PatientDetailListDto>();
+
+        CreateMap<ContactDetail, ContactDetailDto>();
+        CreateMap<ContactDetailDto, ContactDetail>();
     }
 }

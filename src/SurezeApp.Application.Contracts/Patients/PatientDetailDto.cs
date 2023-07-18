@@ -15,7 +15,7 @@ namespace SurezeApp.Patients
         public string NationalIDNumber { get; set; } = string.Empty;
         public string AlternateType { get; set; } = string.Empty;
         public string AlternateIDNumber { get; set; } = string.Empty;
-        public DateTime DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; }
         public string Sex { get; set; } = string.Empty;
         public string Race { get; set; } = string.Empty;
         public string Language { get; set; } = string.Empty;
